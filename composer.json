@@ -1,0 +1,16 @@
+{
+    "name": "hubalekt/db",
+    "type": "library",
+    "description": "DB is simple Mysql library for quick data manipulation with minimum duplicate php code",
+    "keywords": ["mysql", "php", "mysqli"],
+    "authors": [
+        {
+            "name": "Tomáš Hubálek",
+            "email": "tomas.hubalek@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.6.0"
+    },
+    "license": "BSD 3-Clause"
+}
