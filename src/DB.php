@@ -1,12 +1,12 @@
 <?php
 /**
- * DB - Hubièova tøída pro práci s DB, pøedevším pro opakované pøevıkávání vıstupù
- * Urèeno vıhradnì pro práci s MySQL
+ * DB - HubiÄova tÅ™Ã­da pro prÃ¡ci s DB, pÅ™edevÅ¡Ã­m pro opakovanÃ© pÅ™eÅ¾vÃ½kÃ¡vÃ¡nÃ­ vÃ½stupÅ¯
+ * UrÄeno vÃ½hradnÄ› pro prÃ¡ci s MySQL
  *
  * @package Model
  * @version 3.99 short (2018-12-05)
- * @copyright 2008 - NOW() Tomáš Hubálek
- * @author Tomáš Hubálek
+ * @copyright 2008 - NOW() TomÃ¡Å¡ HubÃ¡lek
+ * @author TomÃ¡Å¡ HubÃ¡lek
  * @license BSD 3-Clause License
  */
 
@@ -50,10 +50,10 @@ class DB
    * navaze spojeni s mysql podle configu
    */
   private function connect() {
-    return new mysqli($this->config["db_host"], $this->config["db_user"], $this->config["db_pass"], $this->config["db_name"], $this->config["db_port"]);
+    return new \mysqli($this->config["db_host"], $this->config["db_user"], $this->config["db_pass"], $this->config["db_name"], $this->config["db_port"]);
   }
   /**
-   * Vrací objekt MySQLi pøipojenı k DB
+   * VracÃ­ objekt MySQLi pÅ™ipojenÃ½ k DB
    *
    * @return mysqli
    */
@@ -69,15 +69,15 @@ class DB
     }
 
   /**
-   * databázovı link (mysqli)
+   * databÃ¡zovÃ½ link (mysqli)
    */
   public $link = false;
 
    /**
-    * Vrací jednu hodnotu z pole, podle pøedurèeného klíèe
+    * VracÃ­ jednu hodnotu z pole, podle pÅ™edurÄenÃ©ho klÃ­Äe
     *
-    * @param array $array - pole pro vıbìr
-    * @param string $key - datovı klíè
+    * @param array $array - pole pro vÃ½bÄ›r
+    * @param string $key - datovÃ½ klÃ­Ä
     * @return string
     */
   private function oneFromArray($array, $key = 0)
@@ -89,7 +89,7 @@ class DB
     }
 
    /**
-    * Ošetøí string nebo pole stringù pøed vloením do DB
+    * OÅ¡etÅ™Ã­ string nebo pole stringÅ¯ pÅ™ed vloÅ¾enÃ­m do DB
     *
     * @param string $data
     * @return string
@@ -119,7 +119,7 @@ class DB
     }
 
    /**
-    * libovolnı dotaz do DB
+    * libovolnÃ½ dotaz do DB
     *
     * @param string $sql - sql dotaz
     */
@@ -137,7 +137,7 @@ class DB
     }
 
    /**
-    * libovolnı dotaz do DB
+    * libovolnÃ½ dotaz do DB
     *
     * @param string $sql - sql dotaz
     */
@@ -147,7 +147,7 @@ class DB
     }
 
    /**
-    * libovolnı dotaz do DB
+    * libovolnÃ½ dotaz do DB
     *
     * @param string $sql - sql dotaz, insert
     * @return last insert ID
@@ -160,7 +160,7 @@ class DB
     }
 
    /**
-    * libovolnı dotaz do DB
+    * libovolnÃ½ dotaz do DB
     *
     * @param string $sql - sql dotaz, insert
     * @return last insert ID
@@ -171,10 +171,10 @@ class DB
     }
 
    /**
-    * libovolnı dotaz do DB
+    * libovolnÃ½ dotaz do DB
     *
     * @param string $sql - sql dotaz, update
-    * @return poèet ovlivnìnıch øádek
+    * @return poÄet ovlivnÄ›nÃ½ch Å™Ã¡dek
     */
   public function datau($sql)
     {
@@ -183,11 +183,11 @@ class DB
     }
 
    /**
-    * vrací pole pro jeden øádek z resoursu
+    * vracÃ­ pole pro jeden Å™Ã¡dek z resoursu
     *
     * @param resource
     * @param bool $both - vracet i ciselne prezentaceT
-    * @return pole jednoho øádku
+    * @return pole jednoho Å™Ã¡dku
     */
   private function mfa($data, $both = false)
     {
@@ -206,10 +206,10 @@ class DB
     }
 
    /**
-    * dotaz do DB, vısledek vrací ve dvourozmìrném poli - øádek, sloupec
+    * dotaz do DB, vÃ½sledek vracÃ­ ve dvourozmÄ›rnÃ©m poli - Å™Ã¡dek, sloupec
     *
-    * @param string $sql - sql dotaz, SELECT na n sloupcù
-    * @return Array - jeden øádek v poli, názvy sloupcù jsou klíèe v poli
+    * @param string $sql - sql dotaz, SELECT na n sloupcÅ¯
+    * @return Array - jeden Å™Ã¡dek v poli, nÃ¡zvy sloupcÅ¯ jsou klÃ­Äe v poli
     */
   public function lines($sql, $both = false)
     {
@@ -223,10 +223,10 @@ class DB
     }
 
    /**
-    * dotaz do DB, vısledek vrací ve dvourozmìrném poli - kde klíèem øádku je první sloupec z øádku, sloupec
+    * dotaz do DB, vÃ½sledek vracÃ­ ve dvourozmÄ›rnÃ©m poli - kde klÃ­Äem Å™Ã¡dku je prvnÃ­ sloupec z Å™Ã¡dku, sloupec
     *
-    * @param string $sql - sql dotaz, SELECT na n sloupcù
-    * @return Array - klíèem øádku je první sloupec z øádku, názvy sloupcù jsou klíèe v druhém poli
+    * @param string $sql - sql dotaz, SELECT na n sloupcÅ¯
+    * @return Array - klÃ­Äem Å™Ã¡dku je prvnÃ­ sloupec z Å™Ã¡dku, nÃ¡zvy sloupcÅ¯ jsou klÃ­Äe v druhÃ©m poli
     */
   public function more($sql, $both = false)
     {
@@ -239,10 +239,10 @@ class DB
     }
 
    /**
-    * dotaz do DB, vısledek vrací v trojrozmìrném poli - kde prvními dvìma klíèi øádkù jsou první dvì hodnoty z dotazu a hodnotou je hodnota tøetí
+    * dotaz do DB, vÃ½sledek vracÃ­ v trojrozmÄ›rnÃ©m poli - kde prvnÃ­mi dvÄ›ma klÃ­Äi Å™Ã¡dkÅ¯ jsou prvnÃ­ dvÄ› hodnoty z dotazu a hodnotou je hodnota tÅ™etÃ­
     *
-    * @param string $sql - sql dotaz, SELECT na 3 sloupce (více je ignorováno)
-    * @return Array - první hodnota se stává klíèem, druhá hodnotou
+    * @param string $sql - sql dotaz, SELECT na 3 sloupce (vÃ­ce je ignorovÃ¡no)
+    * @return Array - prvnÃ­ hodnota se stÃ¡vÃ¡ klÃ­Äem, druhÃ¡ hodnotou
     */
   public function three($sql)
     {
@@ -255,10 +255,10 @@ class DB
     }
 
    /**
-    * dotaz do DB právì na dva sloupce, vısledek vrací v poli
+    * dotaz do DB prÃ¡vÄ› na dva sloupce, vÃ½sledek vracÃ­ v poli
     *
-    * @param string $sql - sql dotaz, SELECT na dva sloupce (více je ignorováno)
-    * @return Array - první hodnota se stává klíèem, druhá hodnotou
+    * @param string $sql - sql dotaz, SELECT na dva sloupce (vÃ­ce je ignorovÃ¡no)
+    * @return Array - prvnÃ­ hodnota se stÃ¡vÃ¡ klÃ­Äem, druhÃ¡ hodnotou
     */
   public function two($sql)
     {
@@ -271,10 +271,10 @@ class DB
     }
 
    /**
-    * dotaz do DB právì na jeden sloupec, vısledek vrací v poli
+    * dotaz do DB prÃ¡vÄ› na jeden sloupec, vÃ½sledek vracÃ­ v poli
     *
-    * @param string $sql - sql dotaz, SELECT na jeden sloupec (více je ignorováno)
-    * @return Array - první hodnota pøirozené pole, druhá hodnota je sloupec z øádku
+    * @param string $sql - sql dotaz, SELECT na jeden sloupec (vÃ­ce je ignorovÃ¡no)
+    * @return Array - prvnÃ­ hodnota pÅ™irozenÃ© pole, druhÃ¡ hodnota je sloupec z Å™Ã¡dku
     */
   public function less($sql)
     {
@@ -287,10 +287,10 @@ class DB
     }
 
    /**
-    * dotaz do DB, vısledek vrací v trojrozmìrném poli - kde prvními dvìma klíèi øádkù jsou první dvì hodnoty z dotazu a hodnotou je hodnota tøetí
+    * dotaz do DB, vÃ½sledek vracÃ­ v trojrozmÄ›rnÃ©m poli - kde prvnÃ­mi dvÄ›ma klÃ­Äi Å™Ã¡dkÅ¯ jsou prvnÃ­ dvÄ› hodnoty z dotazu a hodnotou je hodnota tÅ™etÃ­
     *
-    * @param string $sql - sql dotaz, SELECT na 3 sloupce (více je ignorováno)
-    * @return Array - první hodnota se stává klíèem, druhá hodnotou
+    * @param string $sql - sql dotaz, SELECT na 3 sloupce (vÃ­ce je ignorovÃ¡no)
+    * @return Array - prvnÃ­ hodnota se stÃ¡vÃ¡ klÃ­Äem, druhÃ¡ hodnotou
     */
   public function tree($sql)
     {
@@ -303,10 +303,10 @@ class DB
     }
 
    /**
-    * dotaz do DB právì na jednu hodnotu, tedy 1 sloupec + LIMIT 1
+    * dotaz do DB prÃ¡vÄ› na jednu hodnotu, tedy 1 sloupec + LIMIT 1
     *
-    * @param string $sql - sql dotaz, SELECT na jeden sloupec jednu hodnotu (více je ignorováno)
-    * @return string - první hodnota pøirozené pole, druhá hodnota je sloupec z øádku
+    * @param string $sql - sql dotaz, SELECT na jeden sloupec jednu hodnotu (vÃ­ce je ignorovÃ¡no)
+    * @return string - prvnÃ­ hodnota pÅ™irozenÃ© pole, druhÃ¡ hodnota je sloupec z Å™Ã¡dku
     */
   public function one($sql, $col = 0)
     {
@@ -314,11 +314,11 @@ class DB
     }
 
    /**
-    * dotaz do DB, od kterého se oèekává právì jeden øádek ve vıstupu, tedy LIMIT 1
+    * dotaz do DB, od kterÃ©ho se oÄekÃ¡vÃ¡ prÃ¡vÄ› jeden Å™Ã¡dek ve vÃ½stupu, tedy LIMIT 1
     *
     * @param string $sql - sql dotaz, SELECT
     * @param bool $both - Vracet i ciselne prezentaceT
-    * @return Array - jeden øádek v poli, názvy sloupcù jsou klíèe v poli
+    * @return Array - jeden Å™Ã¡dek v poli, nÃ¡zvy sloupcÅ¯ jsou klÃ­Äe v poli
     */
   public function rowx($sql, $both = false)
     {
@@ -326,13 +326,13 @@ class DB
     }
 
    /**
-    * hromadné escapování hodnot, pro single i multi inserty
+    * hromadnÃ© escapovÃ¡nÃ­ hodnot, pro single i multi inserty
     *
-    * @param Array $pole - pole hodnot k escapování
-    * @param Array $special - pole sloupcù které nebudou escapovány, napøíklad obsahující NOW() (default prázdné)
+    * @param Array $pole - pole hodnot k escapovÃ¡nÃ­
+    * @param Array $special - pole sloupcÅ¯ kterÃ© nebudou escapovÃ¡ny, napÅ™Ã­klad obsahujÃ­cÃ­ NOW() (default prÃ¡zdnÃ©)
     * @param Bool $values_only - multiinsert = true, singleinsert = false (default)
-    * @param Bool $escape - neescapovat, napøíklad pokud ji jednou escapováno je, false = neescapovatm true = escapovat (default)
-    * @return string - multiinsert dle parametrù
+    * @param Bool $escape - neescapovat, napÅ™Ã­klad pokud jiÅ¾ jednou escapovÃ¡no je, false = neescapovatm true = escapovat (default)
+    * @return string - multiinsert dle parametrÅ¯
     */
   public function dataset($pole = array(), $special = array(), $values_only = false, $escape = true)
     {
@@ -365,7 +365,7 @@ class DB
     }
 
   /**
-   * naètle log SQL dotazù
+   * naÄtle log SQL dotazÅ¯
    */
   public function readLog($sep = "\n")
     {
@@ -375,8 +375,9 @@ class DB
         return false;
       }
     }
+
   /**
-   * zapíná a vypína logování SQL dotazù
+   * zapÃ­nÃ¡ a vypÃ­na logovÃ¡nÃ­ SQL dotazÅ¯
    */
   public function setLog($value = false)
     {
