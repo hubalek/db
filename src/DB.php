@@ -31,39 +31,82 @@ class DB
 
   public function __construct($db_host = NULL, $db_user = NULL, $db_password = NULL, $db_name = NULL, $db_port = NULL, $db_charset = NULL) {
 
-    // konfigurace pro constuct
-    if ($db_host != NULL)
-      $this->config["db_host"] = $db_host;
-    if ($db_user != NULL)
-      $this->config["db_user"] = $db_user;
-    if ($db_password != NULL)
-      $this->config["db_pass"] = $db_password;
-    if ($db_name != NULL)
-      $this->config["db_name"] = $db_name;
-    if ($db_port != NULL)
-      $this->config["db_port"] = $db_port;
-    if ($db_charset != NULL)
-      $this->config["db_charset"] = $db_charset;
+    if ($db_host !== NULL AND $db_user !== NULL AND $db_password !== NULL) {
+      // credentials are passed, try to connect
+      if ($db_host !== NULL)
+        $this->config["db_host"] = $db_host;
+      if ($db_user !== NULL)
+        $this->config["db_user"] = $db_user;
+      if ($db_password !== NULL)
+        $this->config["db_pass"] = $db_password;
+      if ($db_name !== NULL)
+        $this->config["db_name"] = $db_name;
+      if ($db_port !== NULL)
+        $this->config["db_port"] = $db_port;
+      if ($db_charset !== NULL)
+        $this->config["db_charset"] = $db_charset;
+    }
+
+    if ($this->isMysqli($db_host)) {
+      // mysqli is passed
+      $this->setConncetion($db_host);
+    }
+
   }
+
+  /**
+   * 
+   */
+  private function isMysqli($connection) {
+    if (is_object($connection) AND get_class($connection) == "mysqli") {
+      $out = true;
+    } else {
+      $out = false;
+    }
+    return $out;
+  }
+
+  /**
+   * 
+   */
+  public function getConncetion() {
+    return $this->link;
+  }
+
+  /**
+   * 
+   */
+  public function setConncetion($connection) {
+    if ($this->isMysqli($connection)) {
+      $this->link = $connection;
+      $out = true;
+    } else {
+      $out = false;
+    }
+    return $out;
+  }
+
 
   /**
    * navaze spojeni s mysql podle configu
    */
-  private function connect() {
-    return new \mysqli($this->config["db_host"], $this->config["db_user"], $this->config["db_pass"], $this->config["db_name"], $this->config["db_port"]);
+  public function connect($db_host = NULL, $db_user = NULL, $db_password = NULL, $db_name = NULL, $db_port = NULL) {
+    return new \mysqli($db_host, $db_user, $db_password, $db_name, $db_port);
   }
+
   /**
    * Vrací objekt MySQLi připojený k DB
    *
    * @return mysqli
    */
-  private function getDB()
-    {
-    if ($this->link === false)
-      {
-      $this->link = $this->connect();
-      $this->link->query("SET CHARACTER SET " . $this->config["db_charset"] . ";");
+  private function getDB() {
+    if ($this->link === false) {
+      $connection = $this->connect($this->config["db_host"], $this->config["db_user"], $this->config["db_pass"], $this->config["db_name"], $this->config["db_port"]);
+      if ($this->isMysqli($connection) AND $connection->errno === 0) {
+        $connection->query("SET CHARACTER SET " . $this->config["db_charset"] . ";");
+        $this->link = $connection;
       }
+    }
 
     return $this->link;
     }
@@ -108,13 +151,13 @@ class DB
       {
         foreach ($data AS $index => $value)
         {
-          $data[$index] = $this->escape($value);
+          $data[$index] = $this->escape($value, $length);
         }
       return $data;
       }
     else
       {
-        return mysqli_real_escape_string($this->getDB(), $data);
+        return \mysqli_real_escape_string($this->getDB(), $data);
       }
     }
 
@@ -128,11 +171,13 @@ class DB
     if ($this->config["log"]) {
       $this->sqllog[] = $sql;
     }
+
     $result = $this->getDB()->query($sql);
     if ($this->getDB()->errno)
       {
-      echo ($this->getDB()->error . " (" . $this->getDB()->errno . ")");
+      echo ($this->getDB()->error . " (" . $this->getDB()->errno . ")"); // TODO: throw new exception ?
       }
+
     return $result;
     }
 
@@ -180,6 +225,14 @@ class DB
     {
     $this->getDB()->query($sql);
     return $this->getDB()->affected_rows;
+    }
+
+   /**
+    *
+    */
+  public function update($sql)
+    {
+    return $this->datau($sql);
     }
 
    /**
