@@ -1,10 +1,13 @@
 <?php
 /**
- * DB - Hubičova třída pro práci s DB, především pro opakované přežvýkávání výstupů
- * Určeno výhradně pro práci s MySQL
+ * DB - Mr.Hubič's class for database, specially for output processing
+ * Created only for MySQL
+ *
+ * Very quick data manipulation on output
+ * You can’t fix stupid, always be sure to fix your data at input on your own, this library will help you, but it is not automatic!
  *
  * @package Model
- * @version 3.99 short (2018-12-05)
+ * @version v0.0.1 (2023-02-03)
  * @copyright 2008 - NOW() Tomáš Hubálek
  * @author Tomáš Hubálek
  * @license BSD 3-Clause License
@@ -12,25 +15,23 @@
 
 namespace hubalekt\DB;
 
-class DB
-{
+class DB {
   /**
-   * konfigurace pro spojeni s DB
+   * Internal variables
    */
-  private $sqllog = array();
-
+  private $sqllog = array(); // for SQL log data
+  private $link = false; // for mysqli connection
   private $config = array(
       "db_host" => "localhost",
       "db_user" => "root",
       "db_pass" => "root",
       "db_name" => "test",
       "db_port" => "3306",
-      "db_charset" => "utf8",
+      "db_charset" => "UTF8",
       "log" => false,
-    );
+    ); // default connection variables
 
   public function __construct($db_host = NULL, $db_user = NULL, $db_password = NULL, $db_name = NULL, $db_port = NULL, $db_charset = NULL) {
-
     if ($db_host !== NULL AND $db_user !== NULL AND $db_password !== NULL) {
       // credentials are passed, try to connect
       if ($db_host !== NULL)
@@ -48,14 +49,15 @@ class DB
     }
 
     if ($this->isMysqli($db_host)) {
-      // mysqli is passed
+      // mysqli is passed, just load it
       $this->setConncetion($db_host);
     }
-
   }
 
   /**
-   * 
+   * Support function to check if the variable is mysqli object
+   *
+   * @return bool
    */
   private function isMysqli($connection) {
     if (is_object($connection) AND get_class($connection) == "mysqli") {
@@ -67,14 +69,18 @@ class DB
   }
 
   /**
-   * 
+   * Get the current mysqli object
+   *
+   * @return object(mysqli) / bool(false)
    */
   public function getConncetion() {
     return $this->link;
   }
 
   /**
-   * 
+   * Set the current mysqli object
+   *
+   * @return bool
    */
   public function setConncetion($connection) {
     if ($this->isMysqli($connection)) {
@@ -88,14 +94,17 @@ class DB
 
 
   /**
-   * navaze spojeni s mysql podle configu
+   * Mysqli connect
+   *
+   * @return object
    */
   public function connect($db_host = NULL, $db_user = NULL, $db_password = NULL, $db_name = NULL, $db_port = NULL) {
     return new \mysqli($db_host, $db_user, $db_password, $db_name, $db_port);
   }
 
   /**
-   * Vrací objekt MySQLi připojený k DB
+   * Mysqli connection with charset.
+   * Creates new connection if not yet connected.
    *
    * @return mysqli
    */
@@ -109,36 +118,32 @@ class DB
     }
 
     return $this->link;
-    }
+  }
 
-  /**
-   * databázový link (mysqli)
-   */
-  public $link = false;
 
    /**
-    * Vrací jednu hodnotu z pole, podle předurčeného klíče
+    * Returns single value from array based on a key.
+    * This function is ment for inline use.
     *
-    * @param array $array - pole pro výběr
-    * @param string $key - datový klíč
+    * @param array $array - the source array
+    * @param string $key - the choosen key
     * @return string
     */
-  private function oneFromArray($array, $key = 0)
-    {
+  private function oneFromArray($array, $key = 0) {
     if (ISSET($array[$key]))
       {
       return $array[$key];
       }
-    }
+   }
 
    /**
-    * Ošetří string nebo pole stringů před vložením do DB
+    * Fix input string or array before data manipulation.
     *
     * @param string $data
+    * @param int $length - maximum legth of the string to trim the input data on the fly
     * @return string
     */
-  public function escape($data, $length = false)
-    {
+  public function escape($data, $length = false) {
     if ($length !== false)
       {
       if (is_numeric($length))
@@ -159,15 +164,14 @@ class DB
       {
         return \mysqli_real_escape_string($this->getDB(), $data);
       }
-    }
+  }
 
    /**
-    * libovolný dotaz do DB
+    * Any Query to be processed (default call)
     *
-    * @param string $sql - sql dotaz
+    * @param string $sql - the query
     */
-  public function data($sql)
-    {
+  public function data($sql) {
     if ($this->config["log"]) {
       $this->sqllog[] = $sql;
     }
@@ -179,71 +183,68 @@ class DB
       }
 
     return $result;
-    }
+  }
 
    /**
-    * libovolný dotaz do DB
+    * Any Query to be processed (compatability call)
     *
-    * @param string $sql - sql dotaz
+    * @param string $sql - the query
     */
-  public function query($sql)
-    {
+  public function query($sql) {
     return $this->data($sql);
-    }
+  }
 
    /**
-    * libovolný dotaz do DB
+    * INSERT Query (default call)
     *
-    * @param string $sql - sql dotaz, insert
-    * @return last insert ID
+    * @param string $sql - the query
+    * @return int last insert ID
     */
-  public function datai($sql)
-    {
+  public function datai($sql) {
     //$this->getDB()->query($sql);
     $this->data($sql);
     return $this->getDB()->insert_id;
-    }
+  }
 
    /**
-    * libovolný dotaz do DB
+    * INSERT Query (compatability call)
     *
-    * @param string $sql - sql dotaz, insert
-    * @return last insert ID
+    * @param string $sql - the query
+    * @return int last insert ID
     */
-  public function insert($sql)
-    {
+  public function insert($sql) {
     return $this->datai($sql);
-    }
+  }
 
    /**
-    * libovolný dotaz do DB
+    * UPDATE Query (default call)
     *
-    * @param string $sql - sql dotaz, update
-    * @return počet ovlivněných řádek
+    * @param string $sql - the query
+    * @return int number of affected rows
     */
-  public function datau($sql)
-    {
+  public function datau($sql) {
     $this->getDB()->query($sql);
     return $this->getDB()->affected_rows;
-    }
+  }
 
    /**
+    * UPDATE Query (compatability call)
     *
+    * @param string $sql - the query
+    * @return int number of affected rows
     */
-  public function update($sql)
-    {
+  public function update($sql) {
     return $this->datau($sql);
-    }
+  }
 
    /**
-    * vrací pole pro jeden řádek z resoursu
+    * Returns array for single line of resource
     *
     * @param resource
-    * @param bool $both - vracet i ciselne prezentaceT
-    * @return pole jednoho řádku
+    * @param bool $both - return both string and numeric keys in output array
+    * @return array for single row
     */
-  private function mfa($data, $both = false)
-    {
+  private function mfa($data, $both = false) {
     if ($data->num_rows)
       {
       if ($both)
@@ -256,16 +257,15 @@ class DB
         }
       }
     return false;
-    }
+  }
 
    /**
-    * dotaz do DB, výsledek vrací ve dvourozměrném poli - řádek, sloupec
+    * SELECT data from database, output is two dimensional array - native array + rows
     *
-    * @param string $sql - sql dotaz, SELECT na n sloupců
-    * @return Array - jeden řádek v poli, názvy sloupců jsou klíče v poli
+    * @param string $sql - sql query
+    * @return array - keys are native, values are rows with array as labeled by each column
     */
-  public function lines($sql, $both = false)
-    {
+  public function lines($sql, $both = false) {
     $data_out = array();
     $sql_data = $this->data($sql);
     while ($data = $this->mfa($sql_data, $both))
@@ -273,122 +273,115 @@ class DB
       $data_out[] = $data;
       }
     return $data_out;
-    }
+  }
 
    /**
-    * dotaz do DB, výsledek vrací ve dvourozměrném poli - kde klíčem řádku je první sloupec z řádku, sloupec
+    * SELECT data from database, output is two dimensional array - key based array + rows
     *
-    * @param string $sql - sql dotaz, SELECT na n sloupců
-    * @return Array - klíčem řádku je první sloupec z řádku, názvy sloupců jsou klíče v druhém poli
+    * @param string $sql - sql query
+    * @return array - keys are first value from row, values are rows with array as labeled by each column
     */
-  public function more($sql, $both = false)
-    {
+  public function more($sql, $both = false) {
     $data_out = array();
     foreach ($this->lines($sql, $both) AS $data)
       {
       $data_out[current($data)] = $data;
       }
     return $data_out;
-    }
+  }
 
    /**
-    * dotaz do DB, výsledek vrací v trojrozměrném poli - kde prvními dvěma klíči řádků jsou první dvě hodnoty z dotazu a hodnotou je hodnota třetí
+    * SELECT data from database, output is three dimensional array - double keys based array + third column as a value
     *
-    * @param string $sql - sql dotaz, SELECT na 3 sloupce (více je ignorováno)
-    * @return Array - první hodnota se stává klíčem, druhá hodnotou
+    * @param string $sql - sql query
+    * @return array - keys are first and second value from row, values is third row
     */
-  public function three($sql)
-    {
+  public function three($sql) {
     $data_out = array();
     foreach ($this->lines($sql, true) AS $data)
       {
       $data_out[$data[0]][$data[1]] = $data[2];
       }
     return $data_out;
-    }
+  }
 
    /**
-    * dotaz do DB právě na dva sloupce, výsledek vrací v poli
+    * SELECT data from database, output is two dimensional array - key based array + single value - the pair
     *
-    * @param string $sql - sql dotaz, SELECT na dva sloupce (více je ignorováno)
-    * @return Array - první hodnota se stává klíčem, druhá hodnotou
+    * @param string $sql - sql query
+    * @return array - key is first value from row, value is second value from row
     */
-  public function two($sql)
-    {
+  public function two($sql) {
     $data_out = array();
     foreach ($this->lines($sql, true) AS $data)
       {
       $data_out[$data[0]] = $data[1];
       }
     return $data_out;
-    }
+  }
 
    /**
-    * dotaz do DB právě na jeden sloupec, výsledek vrací v poli
+    * SELECT data from database, output is two dimensional array - native array + values
     *
-    * @param string $sql - sql dotaz, SELECT na jeden sloupec (více je ignorováno)
-    * @return Array - první hodnota přirozené pole, druhá hodnota je sloupec z řádku
+    * @param string $sql - sql query
+    * @return array - keys are native, value is first value from row
     */
-  public function less($sql)
-    {
+  public function less($sql) {
     $data_out = array();
     foreach ($this->lines($sql, true) AS $data)
       {
       $data_out[] = $this->oneFromArray($data, 0);
       }
     return $data_out;
-    }
+  }
 
    /**
-    * dotaz do DB, výsledek vrací v trojrozměrném poli - kde prvními dvěma klíči řádků jsou první dvě hodnoty z dotazu a hodnotou je hodnota třetí
+    * SELECT data from database, output is three dimensional array - keys and native based array + value
     *
-    * @param string $sql - sql dotaz, SELECT na 3 sloupce (více je ignorováno)
-    * @return Array - první hodnota se stává klíčem, druhá hodnotou
+    * @param string $sql - sql query
+    * @return array - first key is first value from row, second key is native, values is second value from row
     */
-  public function tree($sql)
-    {
+  public function tree($sql) {
     $data_out = array();
     foreach ($this->lines($sql, true) AS $data)
       {
       $data_out[$data[0]][] = $data[1];
       }
     return $data_out;
-    }
+  }
 
    /**
-    * dotaz do DB právě na jednu hodnotu, tedy 1 sloupec + LIMIT 1
+    * SELECT data from database, output is single value
     *
-    * @param string $sql - sql dotaz, SELECT na jeden sloupec jednu hodnotu (více je ignorováno)
-    * @return string - první hodnota přirozené pole, druhá hodnota je sloupec z řádku
+    * @param string $sql - sql query
+    * @return string - first value field of the first row only
     */
-  public function one($sql, $col = 0)
-    {
+  public function one($sql, $col = 0) {
     return $this->oneFromArray($this->rowx($sql, true), $col);
-    }
+  }
 
    /**
-    * dotaz do DB, od kterého se očekává právě jeden řádek ve výstupu, tedy LIMIT 1
+    * SELECT data from database, output is single row
     *
-    * @param string $sql - sql dotaz, SELECT
-    * @param bool $both - Vracet i ciselne prezentaceT
-    * @return Array - jeden řádek v poli, názvy sloupců jsou klíče v poli
+    * @param string $sql - sql query
+    * @param bool $both - to return both string and numeric keys
+    * @return array - first row only
     */
-  public function rowx($sql, $both = false)
-    {
+  public function rowx($sql, $both = false) {
     return $this->mfa($this->data($sql), $both);
-    }
+  }
+
 
    /**
-    * hromadné escapování hodnot, pro single i multi inserty
+    * Group input fix for rows and multi inserts
     *
-    * @param Array $pole - pole hodnot k escapování
-    * @param Array $special - pole sloupců které nebudou escapovány, například obsahující NOW() (default prázdné)
-    * @param Bool $values_only - multiinsert = true, singleinsert = false (default)
-    * @param Bool $escape - neescapovat, například pokud již jednou escapováno je, false = neescapovatm true = escapovat (default)
-    * @return string - multiinsert dle parametrů
+    * @param array $pole - array of values to be escaped
+    * @param array $special - array of colums to be skipped from fixing, for example containing NOW() or intentional default "empty values"
+    * @param bool $values_only - multiinsert = true, singleinsert = false (default)
+    * @param bool $escape - do the fixing, skip fixing for already fixed values, false = do not fix, true = do fix (default)
+    * @return string - multiinsert based on params
     */
-  public function dataset($pole = array(), $special = array(), $values_only = false, $escape = true)
-    {
+  public function dataset($pole = array(), $special = array(), $values_only = false, $escape = true) {
     if (!is_array($special) AND is_string($special)) {
       $special = array($special);
     }
@@ -415,26 +408,29 @@ class DB
       $q = ", (" . $q . ")";
 
     return $q;
-    }
+  }
 
   /**
-   * načtle log SQL dotazů
+   * Returns the SQL log
+   *
+   * @return string / bool(false)
    */
-  public function readLog($sep = "\n")
-    {
+  public function readLog($sep = "\n") {
       if (count($this->sqllog)) {
         return implode($sep, $this->sqllog);
       } else {
         return false;
       }
-    }
+  }
 
   /**
-   * zapíná a vypína logování SQL dotazů
+   * Enables the SQL log
+   *
+   * @return bool - true
    */
-  public function setLog($value = false)
-    {
+  public function setLog($value = false) {
     $this->config["log"] = $value;
-    }
+    return true;
+  }
 }
 ?>
