@@ -14,7 +14,7 @@
     },
     "autoload": {
         "psr-4": {
-            "hubalekt\\DB\\": "src/"
+            "hubalekt\\": "src/"
         }
     }
 }
