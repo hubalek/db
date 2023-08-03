@@ -22,35 +22,35 @@ class DB {
   private $sqllog = array(); // for SQL log data
   private $link = false; // for mysqli connection
   private $config = array(
-      "db_host" => "localhost",
-      "db_user" => "root",
-      "db_pass" => "root",
-      "db_name" => "test",
-      "db_port" => "3306",
-      "db_charset" => "UTF8",
+      "host" => "localhost",
+      "user" => "root",
+      "pass" => "root",
+      "name" => "test",
+      "port" => "3306",
+      "charset" => "UTF8",
       "log" => false,
     ); // default connection variables
 
-  public function __construct($db_host = NULL, $db_user = NULL, $db_password = NULL, $db_name = NULL, $db_port = NULL, $db_charset = NULL) {
-    if ($db_host !== NULL AND $db_user !== NULL AND $db_password !== NULL) {
+  public function __construct($host = NULL, $user = NULL, $password = NULL, $name = NULL, $port = NULL, $charset = NULL) {
+    if ($host !== NULL AND $user !== NULL AND $password !== NULL) {
       // credentials are passed, try to connect
-      if ($db_host !== NULL)
-        $this->config["db_host"] = $db_host;
-      if ($db_user !== NULL)
-        $this->config["db_user"] = $db_user;
-      if ($db_password !== NULL)
-        $this->config["db_pass"] = $db_password;
-      if ($db_name !== NULL)
-        $this->config["db_name"] = $db_name;
-      if ($db_port !== NULL)
-        $this->config["db_port"] = $db_port;
-      if ($db_charset !== NULL)
-        $this->config["db_charset"] = $db_charset;
+      if ($host !== NULL)
+        $this->config["host"] = $host;
+      if ($user !== NULL)
+        $this->config["user"] = $user;
+      if ($password !== NULL)
+        $this->config["pass"] = $password;
+      if ($name !== NULL)
+        $this->config["name"] = $name;
+      if ($port !== NULL)
+        $this->config["port"] = $port;
+      if ($charset !== NULL)
+        $this->config["charset"] = $charset;
     }
 
-    if ($this->isMysqli($db_host)) {
+    if ($this->isMysqli($host)) {
       // mysqli is passed, just load it
-      $this->setConncetion($db_host);
+      $this->setConncetion($host);
     }
   }
 
@@ -98,8 +98,8 @@ class DB {
    *
    * @return object
    */
-  public function connect($db_host = NULL, $db_user = NULL, $db_password = NULL, $db_name = NULL, $db_port = NULL) {
-    return new \mysqli($db_host, $db_user, $db_password, $db_name, $db_port);
+  public function connect($host = NULL, $user = NULL, $password = NULL, $name = NULL, $port = NULL) {
+    return new \mysqli($host, $user, $password, $name, $port);
   }
 
   /**
@@ -110,9 +110,9 @@ class DB {
    */
   private function getDB() {
     if ($this->link === false) {
-      $connection = $this->connect($this->config["db_host"], $this->config["db_user"], $this->config["db_pass"], $this->config["db_name"], $this->config["db_port"]);
+      $connection = $this->connect($this->config["host"], $this->config["user"], $this->config["pass"], $this->config["name"], $this->config["port"]);
       if ($this->isMysqli($connection) AND $connection->errno === 0) {
-        $connection->query("SET CHARACTER SET " . $this->config["db_charset"] . ";");
+        $connection->query("SET CHARACTER SET " . $this->config["charset"] . ";");
         $this->link = $connection;
       }
     }
