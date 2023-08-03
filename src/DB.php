@@ -13,7 +13,7 @@
  * @license BSD 3-Clause License
  */
 
-namespace hubalekt\DB;
+namespace hubalekt;
 
 class DB {
   /**
